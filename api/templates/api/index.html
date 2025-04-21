@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puntos de Interés</title>
+</head>
+<body>
+    <h1>Lugares Registrados</h1>
+
+    <form method="GET">
+        <label>Tu longitud:</label>
+        <input type="text" name="lon">
+        <label>Tu latitud:</label>
+        <input type="text" name="lat">
+        <button type="submit">Filtrar por radio de 5km</button>
+    </form>
+
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Distancia (km)</th>
+        </tr>
+        {% for lugar in lugares %}
+        <tr>
+            <td>{{ lugar.nombre }}</td>
+            <td>{{ lugar.tipo }}</td>
+            <td>
+                {% if lugar.distancia %}
+                    {{ lugar.distancia|floatformat:2 }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{% url 'agregar_lugar' %}">
+        <button>Agregar Lugar</button>
+    </a>
+</body>
+</html>
