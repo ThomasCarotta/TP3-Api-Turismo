@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('agregar/', views.agregar_lugar, name='agregar_lugar'),
+    path('agregar/', views.agregar_lugar_view, name='agregar_lugar'),
 ]

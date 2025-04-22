@@ -1,16 +1,26 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  backend:
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  web:
     build: .
+    volumes:
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - redis
-    volumes:
-      - .:/app
+    command: >
+      sh -c "python manage.py migrate && 
+             python scripts/check_redis_data.py || 
+             python scripts/load_redis_data.py && 
+             python manage.py runserver 0.0.0.0:8000"
 
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
+volumes:
+  redis_data:

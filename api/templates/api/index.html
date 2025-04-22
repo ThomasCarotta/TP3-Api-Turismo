@@ -2,41 +2,71 @@
 <html>
 <head>
     <title>Puntos de Interés</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'api/styles.css' %}">
 </head>
 <body>
-    <h1>Lugares Registrados</h1>
+    <div class="container">
+        <h1>Lugares Registrados</h1>
 
-    <form method="GET">
-        <label>Tu longitud:</label>
-        <input type="text" name="lon">
-        <label>Tu latitud:</label>
-        <input type="text" name="lat">
-        <button type="submit">Filtrar por radio de 5km</button>
-    </form>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-    <table border="1">
-        <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Distancia (km)</th>
-        </tr>
-        {% for lugar in lugares %}
-        <tr>
-            <td>{{ lugar.nombre }}</td>
-            <td>{{ lugar.tipo }}</td>
-            <td>
-                {% if lugar.distancia %}
-                    {{ lugar.distancia|floatformat:2 }}
-                {% else %}
-                    -
+        <form method="GET" class="form">
+            <div class="form-group">
+                <label>Tu longitud:</label>
+                <input type="text" name="lon" value="{{ request.GET.lon }}" placeholder="Ej: -71.3103">
+            </div>
+            <div class="form-group">
+                <label>Tu latitud:</label>
+                <input type="text" name="lat" value="{{ request.GET.lat }}" placeholder="Ej: -41.1335">
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn">Buscar lugares a 5km</button>
+                {% if coordenadas_ingresadas %}
+                <a href="{% url 'index' %}" class="btn btn-clear">Limpiar ubicación</a>
                 {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+            </div>
+        </form>
 
-    <a href="{% url 'agregar_lugar' %}">
-        <button>Agregar Lugar</button>
-    </a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Distancia (km)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lugar in lugares %}
+                <tr>
+                    <td>{{ lugar.nombre }}</td>
+                    <td>{{ lugar.tipo }}</td>
+                    <td>
+                        {% if lugar.mostrar_distancia %}
+                            {{ lugar.distancia }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No se encontraron lugares registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <a href="{% url 'agregar_lugar' %}" class="btn">Agregar Lugar</a>
+        </div>
+    </div>
 </body>
 </html>
